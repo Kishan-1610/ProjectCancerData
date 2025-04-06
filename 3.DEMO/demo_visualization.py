@@ -6,13 +6,13 @@ import plotly.express as px
 from lifelines import KaplanMeierFitter
 
 def load_data(file_path):
-    if not os.path.exists(file_path):
-        print(f"Error: File not found at {file_path}")
-        exit()
-    data = pd.read_csv(file_path)
-    print("Data preview:")
-    print(data.head())
+    chunks = []
+    chunk_size = 100000  # You can adjust this
+    for chunk in pd.read_csv(file_path, chunksize=chunk_size):
+        chunks.append(chunk)
+    data = pd.concat(chunks, ignore_index=True)
     return data
+
 
 def check_required_columns(data, required_columns):
     missing_columns = [col for col in required_columns if col not in data.columns]
